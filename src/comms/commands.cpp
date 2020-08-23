@@ -10,7 +10,6 @@ const char* commands[] = {
   "/stats",
   "/geek_stats",
   "/toggle_lights",
-  "/adjust_brightness", 
   "/increase", 
   "/decrease", 
   "/toggle_timer",
@@ -88,10 +87,6 @@ void cmd_toggleLights(int i){
   }
 }
 
-void cmd_adjustBrightness(int message_index){
-  return;
-}
-
 void cmd_increaseBrightness(int i){
   adjustBrightness(1);
   snprintf_P(
@@ -155,15 +150,13 @@ void messageHandler(const char *message, int i){
       break;
     case 4:      cmd_toggleLights(i);
       break;
-    case 5:      cmd_adjustBrightness(i);
+    case 5:      cmd_increaseBrightness(i);
       break;
-    case 6:      cmd_increaseBrightness(i);
+    case 6:      cmd_decreaseBrightness(i);
       break;
-    case 7:      cmd_decreaseBrightness(i);
+    case 7:      cmd_toggleTimer(i);
       break;
-    case 8:      cmd_toggleTimer(i);
-      break;
-    case 9:      cmd_timeOfDay(i);
+    case 8:      cmd_timeOfDay(i);
       break;
     case 127:    cmd_setRGB(message, i);
       break;
