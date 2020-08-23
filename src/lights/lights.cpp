@@ -1,26 +1,17 @@
 #include "lights.h"
 #include "../utils/time.h"
 
-
-//timer 
+/*Timer */
 const int timer_states = 8;
-const int timer_start[timer_states] PROGMEM = {
-  7 *60 + 30,
-  9 *60 + 30,
-  12*60 + 30,
-  17*60     ,
-  18*60 + 30,
-  19*60 + 30,
-  23*60,
-  23*60 + 15
-  }; //SR start, SS start, TW start night
-const char* timer_chars[timer_states] = {"Sunrise", "Morning", "Afternoon","Sunset", "Evening","Twilight","Night", "Night"};
-const int timer_brightness[timer_states] PROGMEM = {10,700,1000,900,900,250,100,0};
+
+//RGBW profiles
 const int SUNRISE_rgbw[] PROGMEM =   {255,80,0,0};
 const int DAY_rgbw[] PROGMEM =       {255,120,112,255};
 const int SUNSET_rgbw[] PROGMEM =    {255,80,10,100};
 const int TWILIGHT_rgbw[] PROGMEM =  {70,20,255,0};
 const int NIGHT_rgbw[] PROGMEM =     {0,0,0,0};
+
+//Timer profiles
 const int* timer_rgbws[timer_states] = {
   SUNRISE_rgbw,
   DAY_rgbw,
@@ -31,13 +22,29 @@ const int* timer_rgbws[timer_states] = {
   TWILIGHT_rgbw,
   NIGHT_rgbw
 };
-bool timer_on = 1;
+const int timer_brightness[timer_states] PROGMEM = {10,700,1000,900,900,250,100,0};
+
+const int timer_start[timer_states] PROGMEM = {
+  7 *60 + 30,
+  9 *60 + 30,
+  12*60 + 30,
+  17*60     ,
+  18*60 + 30,
+  19*60 + 30,
+  23*60,
+  23*60 + 15
+  }; //SR start, SS start, TW start night
+
+const char* timer_chars[timer_states] = {"Sunrise", "Morning", "Afternoon","Sunset", "Evening","Twilight","Night", "Night"};
+
+bool timer_on = 1; 
 uint8_t timer_state = 0;
 
+//Lights
 const int RGB_RES = 255;
 const int MAX_BRIGHTNESS = 1000;
 
-//led hardware
+//LED hardware
 const int rgbw_pins[] = {D7,D8,D6,D5};
 const int PWM_FREQ = 781;
 const int PWM_RES = 1023;
