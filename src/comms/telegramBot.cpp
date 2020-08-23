@@ -62,5 +62,5 @@ void checkMessages(){
 
 void sendResetMsg(){
   String msg = "Reset! Last reset reason: " + ESP.getResetReason();
-  bot->sendSimpleMessage("252268344",msg,"");
+  //bot->sendSimpleMessage("put your telegram ID here",msg,"");
 }
