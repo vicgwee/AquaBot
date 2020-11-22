@@ -4,7 +4,21 @@
 #include "../sensor/sensor.h"
 #include "../utils/time.h"
 
-const char* commands[] = {
+void messageHandler(const char *message, int i);
+int8_t parseCommand(const char *message);
+void cmd_current(int i);
+void cmd_average(int i);
+void cmd_stats(int i);
+void cmd_geekstats(int i);
+void cmd_toggleLights(int i);
+void cmd_increaseBrightness(int i);
+void cmd_decreaseBrightness(int i);
+void cmd_toggleTimer(int i);
+void cmd_timeOfDay(int i);
+void cmd_unknown(int i);
+void cmd_setRGB(const char *message, int i);
+
+const char* commands[] PROGMEM = {
   "/current",
   "/average",
   "/stats",
@@ -22,13 +36,39 @@ char reply2[MAX_REPLY_LENGTH];
 char reply3[MAX_REPLY_LENGTH];
 char* replies[] = {reply1, reply2, reply3};
 
+void messageHandler(const char *message, int i){
+  static void (*const cmd_jump_table[n_commands])(int) PROGMEM = {
+  cmd_current, 
+  cmd_average, 
+  cmd_stats, 
+  cmd_geekstats, 
+  cmd_toggleLights, 
+  cmd_increaseBrightness, 
+  cmd_decreaseBrightness, 
+  cmd_toggleTimer, 
+  cmd_timeOfDay
+  };
+  int8_t command = parseCommand(message);
+  switch(command){
+    case 127:    cmd_setRGB(message, i);
+      break;
+    default:
+      if (command < 0 || uint8_t(command) > n_commands){
+        cmd_unknown(i);
+      }
+      else{
+        cmd_jump_table[command](i);
+      }
+  }
+}
+
 int8_t parseCommand(const char *message){
   if (message[0] == '/'){
     if (strlen(message) == 10 && strcmp_P(message, (PGM_P)F("/rgb")) > 0){
       return 127;
     }
 
-    for(int i = n_commands-1; i >= 0; i--){
+    for(int i = n_commands-1; i >= 0; --i){
       if (strcmp(message, commands[i])==0){
         return i;
       }
@@ -134,31 +174,4 @@ void cmd_setRGB(const char *message, int i){
     (PGM_P)F("RGB colour set to (%u,%u,%u)"),
     (uint8_t)rgbw[0], (uint8_t)rgbw[1], (uint8_t)rgbw[2]
   );
-}
-
-void messageHandler(const char *message, int i){
-  switch(parseCommand(message)){
-    case -1:     cmd_unknown(i);
-      break;
-    case 0:      cmd_current(i);
-      break;
-    case 1:      cmd_average(i);
-      break;
-    case 2:      cmd_stats(i);
-      break;
-    case 3:      cmd_geekstats(i);
-      break;
-    case 4:      cmd_toggleLights(i);
-      break;
-    case 5:      cmd_increaseBrightness(i);
-      break;
-    case 6:      cmd_decreaseBrightness(i);
-      break;
-    case 7:      cmd_toggleTimer(i);
-      break;
-    case 8:      cmd_timeOfDay(i);
-      break;
-    case 127:    cmd_setRGB(message, i);
-      break;
-  }
 }
